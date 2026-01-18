@@ -1,24 +1,30 @@
+const fs = require('fs');
+const path = require('path');
 
-export const getUrlParams = (url) => {
-  const params = {};
-  new URLSearchParams(new URL(url).search).forEach((value, key) => {
-    params[key] = value;
-  });
-  return params;
-};
-
-
-const calculateDelay = (retryCount) => {
-    return Math.pow(2, retryCount) * 1000;
-};
-
-
-export const generateRandomToken = (length = 32) => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let token = '';
-  for (let i = 0; i < length; i++) {
-    token += chars.charAt(Math.floor(Math.random() * chars.length));
+class Parser {
+  constructor(filePath) {
+    this.filePath = filePath;
   }
-  return token;
-};
 
+  async readData() {
+    try {
+      const data = await fs.promises.readFile(this.filePath, 'utf8');
+      return data;
+    } catch (error) {
+      throw new Error(`Failed to read file: ${error.message}`);
+    }
+  }
+
+  parseData(data) {
+    const parsedData = data.split('\n').map(line => line.split(','));
+    return parsedData;
+  }
+
+  async parseFile() {
+    const data = await this.readData();
+    const parsedData = this.parseData(data);
+    return parsedData;
+  }
+}
+
+module.exports = Parser;
