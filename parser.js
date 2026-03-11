@@ -7,3 +7,8 @@ export const getUrlParams = (url) => {
   return params;
 };
 
+
+const calculateDelay = (retryCount) => {
+    return Math.pow(2, retryCount) * 1000;
+};
+
